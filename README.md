@@ -24,6 +24,7 @@ DESIGN.md  →  export-design-md  →  design-preview.html (or .astro)
 
 - **`DESIGN.md`** must exist in the project root
 - **Tailwind CSS** must be present in `package.json` (the skill uses Tailwind classes for layout; color/typography samples use inline styles for reliability)
+- **Dev server with module script support** — the skill detects your project's entry point from `index.html` (or `src/`) and reuses it in the generated file. Vite is the primary tested environment.
 
 ---
 
