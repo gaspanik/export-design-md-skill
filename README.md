@@ -117,14 +117,13 @@ Once the file is generated, the skill asks what to do next:
 | Astro page has wrong layout | The skill reads your existing pages to infer the layout. If the result looks off, pass a custom template or edit the generated file. |
 | Figma capture returns no result | Ensure the dev server is running and the Figma MCP server is connected in Claude Code settings. |
 
+---
 
 ## Related skills
 
 - [create-design-md-skill](https://github.com/gaspanik/create-design-md-skill) — Generate `DESIGN.md` from your codebase or a Figma file
 
-
 ---
 
 Built by Masaaki Komori - [@cipher](https://x.com/cipher) · Skill for [Claude Code](https://claude.ai/code)
 
----
