@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Design System — [Project Name]</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gen-interface-jp@latest/all.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gen-interface-jp@latest/display-all.css" />
+  </head>
+  <body class="bg-gray-50 text-gray-900 antialiased">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+      <div class="flex justify-between items-center mx-auto px-6 py-4 max-w-4xl">
+        <span class="text-sm font-semibold tracking-wide">[Project Name]</span>
+        <nav aria-label="セクションナビゲーション">
+          <ul class="flex items-center gap-6 text-sm text-gray-500">
+            <li><a href="#colors" class="hover:text-gray-900 transition-colors">Colors</a></li>
+            <li><a href="#typography" class="hover:text-gray-900 transition-colors">Typography</a></li>
+            <li><a href="#spacing" class="hover:text-gray-900 transition-colors">Spacing</a></li>
+            <li><a href="#shapes" class="hover:text-gray-900 transition-colors">Shapes</a></li>
+            <li><a href="#components" class="hover:text-gray-900 transition-colors">Components</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="mx-auto px-6 py-12 max-w-4xl">
+
+      <!-- Breadcrumb -->
+      <p class="text-sm text-gray-400 mb-8">
+        ← <a href="/" class="hover:text-gray-700 transition-colors">Back to project</a>
+      </p>
+
+      <!-- Article header -->
+      <div class="mb-10">
+        <span class="inline-block text-xs font-medium bg-gray-100 text-gray-500 px-3 py-1 rounded-full mb-4 uppercase tracking-widest">Design System</span>
+        <h1 class="text-4xl font-normal leading-snug mb-4">
+          [Project Name]<br>デザインシステム
+        </h1>
+        <p class="text-gray-500 text-sm leading-relaxed">[Description]</p>
+        <p class="text-gray-400 text-xs mt-3">Generated [Date]</p>
+      </div>
+
+      <hr class="border-gray-200 mb-12" />
+
+      <!-- Overview -->
+      <section class="mb-16">
+        <p class="text-gray-600 text-sm leading-7">[Overview text from DESIGN.md]</p>
+      </section>
+
+      <!-- 01 Colors -->
+      <section id="colors" class="mb-16">
+        <div class="flex items-baseline gap-3 mb-6">
+          <span class="text-xs text-gray-400 font-medium uppercase tracking-widest">01</span>
+          <h2 class="text-2xl font-normal">Colors</h2>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 mb-8">
+          <!-- Primary -->
+          <div>
+            <div style="background:#2957c8;height:7rem;border-radius:0.75rem;"></div>
+            <p class="mt-2 text-sm font-medium">Primary</p>
+            <p class="text-xs text-gray-400 font-mono">#2957c8</p>
+          </div>
+          <!-- Secondary -->
+          <div>
+            <div style="background:#1ba39c;height:7rem;border-radius:0.75rem;"></div>
+            <p class="mt-2 text-sm font-medium">Secondary</p>
+            <p class="text-xs text-gray-400 font-mono">#1ba39c</p>
+          </div>
+          <!-- (add more swatches as needed) -->
+        </div>
+
+        <p class="text-gray-600 text-sm leading-7">[Colors section text from DESIGN.md]</p>
+      </section>
+
+      <!-- 02 Typography -->
+      <section id="typography" class="mb-16">
+        <div class="flex items-baseline gap-3 mb-6">
+          <span class="text-xs text-gray-400 font-medium uppercase tracking-widest">02</span>
+          <h2 class="text-2xl font-normal">Typography</h2>
+        </div>
+
+        <div class="flex flex-col gap-8 mb-8">
+          <!-- h1 sample -->
+          <div class="pb-6 border-b border-gray-100">
+            <p class="text-xs text-gray-400 font-mono mb-3">h1 — [fontFamily] / [fontSize] / [fontWeight]</p>
+            <p style="font-size:3.75rem;font-weight:400;line-height:1.3;">見出しサンプル</p>
+          </div>
+          <!-- body-md sample -->
+          <div class="pb-6 border-b border-gray-100">
+            <p class="text-xs text-gray-400 font-mono mb-3">body-md — [fontFamily] / [fontSize] / [fontWeight]</p>
+            <p class="text-sm leading-7 text-gray-700">本文サンプルテキストです。読みやすさと余白感のバランスをとった行間で表示されます。</p>
+          </div>
+          <!-- label-sm sample -->
+          <div>
+            <p class="text-xs text-gray-400 font-mono mb-3">label-sm — [fontFamily] / [fontSize] / ls [letterSpacing]</p>
+            <p style="font-size:0.75rem;letter-spacing:0.24em;text-transform:uppercase;">Label sample</p>
+          </div>
+        </div>
+
+        <p class="text-gray-600 text-sm leading-7">[Typography section text from DESIGN.md]</p>
+      </section>
+
+      <!-- 03 Spacing -->
+      <section id="spacing" class="mb-16">
+        <div class="flex items-baseline gap-3 mb-6">
+          <span class="text-xs text-gray-400 font-medium uppercase tracking-widest">03</span>
+          <h2 class="text-2xl font-normal">Spacing</h2>
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <!-- xs: 8px -->
+          <div class="flex items-center gap-4">
+            <div style="width:8px;height:1rem;background:#2957c8;border-radius:2px;flex-shrink:0;"></div>
+            <span class="text-sm font-mono text-gray-700 w-8">xs</span>
+            <span class="text-sm text-gray-400">8px</span>
+          </div>
+          <!-- (add more spacing tokens as needed) -->
+        </div>
+      </section>
+
+      <!-- 04 Shapes -->
+      <section id="shapes" class="mb-16">
+        <div class="flex items-baseline gap-3 mb-6">
+          <span class="text-xs text-gray-400 font-medium uppercase tracking-widest">04</span>
+          <h2 class="text-2xl font-normal">Shapes</h2>
+        </div>
+
+        <div class="grid grid-cols-4 gap-6 mb-8">
+          <!-- sm: 16px -->
+          <div class="flex flex-col items-center gap-3">
+            <div style="width:5rem;height:5rem;border-radius:16px;background:linear-gradient(135deg,#2957c8,#1ba39c);"></div>
+            <div class="text-center">
+              <p class="text-sm font-medium">sm</p>
+              <p class="text-xs text-gray-400 font-mono">16px</p>
+            </div>
+          </div>
+          <!-- (add more rounded tokens as needed) -->
+        </div>
+
+        <p class="text-gray-600 text-sm leading-7">[Shapes section text from DESIGN.md]</p>
+      </section>
+
+      <!-- 05 Components -->
+      <section id="components" class="mb-16">
+        <div class="flex items-baseline gap-3 mb-6">
+          <span class="text-xs text-gray-400 font-medium uppercase tracking-widest">05</span>
+          <h2 class="text-2xl font-normal">Components</h2>
+        </div>
+
+        <!-- Component previews go here -->
+
+        <p class="text-gray-600 text-sm leading-7">[Components section text from DESIGN.md]</p>
+      </section>
+
+      <!-- 06 Do's and Don'ts -->
+      <section id="guidelines" class="mb-16">
+        <div class="flex items-baseline gap-3 mb-6">
+          <span class="text-xs text-gray-400 font-medium uppercase tracking-widest">06</span>
+          <h2 class="text-2xl font-normal">Do's and Don'ts</h2>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <div class="flex gap-2 text-sm leading-7">
+            <span class="text-green-600 font-bold shrink-0">✓</span>
+            <p class="text-gray-700">[Do item]</p>
+          </div>
+          <div class="flex gap-2 text-sm leading-7">
+            <span class="text-red-400 font-bold shrink-0">✗</span>
+            <p class="text-gray-700">[Don't item]</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-200">
+      <div class="flex justify-between items-center mx-auto px-6 py-6 max-w-4xl text-sm text-gray-400">
+        <p>[Project Name] Design System</p>
+        <p>Generated [Date]</p>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
