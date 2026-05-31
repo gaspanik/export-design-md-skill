@@ -45,7 +45,8 @@ In Astro mode, the skill inspects existing pages and layouts to match the projec
 skills/
   export-design-md/
     SKILL.md          — skill definition loaded by Claude Code
-    template.html     — default visual template
+    template.html     — default visual template (HTML mode)
+    template.astro    — default visual template (Astro mode)
 ```
 
 ---
@@ -82,7 +83,7 @@ Or in natural language:
 DESIGN.md をビジュアルドキュメントに変換して
 ```
 
-If no argument is provided, the skill uses the built-in `template.html`. The report is written in whatever language you are using in the conversation.
+If no argument is provided, the skill uses the built-in `template.html` (HTML mode) or `template.astro` (Astro mode). The report is written in whatever language you are using in the conversation.
 
 ---
 
@@ -102,7 +103,7 @@ Once the file is generated, the skill asks what to do next:
 
 - **`DESIGN.md` is required.** If the file doesn't exist, generate it first.
 - **Color swatches always use inline styles.** Tailwind JIT won't generate classes for dynamic hex values — inline `style="background:#XXXXXX"` is intentional, not a bug.
-- **Custom templates follow the default structure.** The skill uses your template's visual style and layout, then populates it with the actual DESIGN.md content. Keep the same section order (Header → Overview → Colors → Typography → Spacing → Shapes → Components → Do's & Don'ts → Footer) for best results.
+- **Custom templates follow the default structure.** The skill copies your template verbatim and replaces `[placeholder]` values with actual DESIGN.md content. Keep the same section order (Header → Overview → Colors → Typography → Spacing → Shapes → Components → Do's & Don'ts → Footer) for best results. Pass a `.astro` file for Astro projects.
 - **Figma capture requires the Figma MCP server.** Connect the official [Figma MCP server](https://github.com/figma/mcp-server-guide) in Claude Code settings before selecting the Figma export option.
 
 ---

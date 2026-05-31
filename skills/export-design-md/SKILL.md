@@ -37,9 +37,14 @@ If Tailwind is confirmed, check for `"astro"`:
 Check whether `$ARGUMENTS` contains a file path.
 
 - **Argument provided** → Read the specified file as the template
-- **No argument** → Use `template.html` in the same directory as this skill
+- **No argument (HTML mode)** → Use `template.html` in the same directory as this skill
+- **No argument (Astro mode)** → Use `template.astro` in the same directory as this skill
 
-The template path is relative to the skill directory. If the skill is at `.claude/skills/export-design-md/`, the default template path is `.claude/skills/export-design-md/template.html`.
+The template path is relative to the skill directory. If the skill is at `.claude/skills/export-design-md/`, the default template paths are:
+- HTML mode: `.claude/skills/export-design-md/template.html`
+- Astro mode: `.claude/skills/export-design-md/template.astro`
+
+Read the appropriate template **before** generating the output file.
 
 ## Step 4: Read and Parse DESIGN.md
 
@@ -86,59 +91,36 @@ grep -rl --include="*.ts" --include="*.js" \
 
 ## Step 6A: [HTML Mode] Generate and Write the HTML
 
-Generate HTML following the template's **visual style and layout structure**, populated with the actual content from DESIGN.md. Write it to the project root as `design-preview.html`, overwriting any existing file without confirmation.
+**Start from `template.html` verbatim. Do NOT redesign or rewrite it.** Replace only the `[placeholder]` values with actual content from DESIGN.md. The Tailwind classes, layout structure, and visual style must be preserved exactly as-is.
 
-### Requirements for the Generated HTML
+Write to the project root as `design-preview.html`, overwriting any existing file without confirmation.
 
-**Reuse the project's setup:**
-- Do not use Tailwind CDN
-- Use the `<link>` and `<script>` tags collected in Step 5A
-- Color swatches must use inline `style="background:#XXXXXX"` (Tailwind JIT may not scan generated content)
-- Typography samples must use inline `style` for `font-size` / `line-height` / `letter-spacing`
-- Use Tailwind classes for general utilities (layout, spacing, text color, etc.)
+### What to replace
 
-**Page structure (following the template's style):**
+**In `<head>`:**
+- Replace the CDN `<link>` tags with the `<link>` / `<script>` tags collected in Step 5A
 
-1. **Header** — project name, navigation (anchor links to each section)
-2. **Article head** — badge ("Design System"), title (project name + "Design System"), generation date
-3. **Overview section** — Overview content from DESIGN.md
-4. **Colors section** — color swatch list (swatch + name + hex value + description)
-5. **Typography section** — sample text for each typography level (rendered at actual font size/family)
-6. **Spacing section** — visual spacing scale (width bars)
-7. **Shapes section** — visual border-radius samples (sample box for each value)
-8. **Components section** — Components content from DESIGN.md
-9. **Do's and Don'ts section** — Do's and Don'ts content from DESIGN.md
-10. **Footer** — project name + generation date
+**In the body — replace each `[placeholder]` with real content from DESIGN.md:**
 
-**Color swatch implementation pattern:**
-```html
-<!-- ✅ Correct (inline style ensures reliable rendering) -->
-<div style="background:#2957c8;height:7rem;border-radius:1rem;"></div>
+| Placeholder | Replace with |
+|---|---|
+| `[Project Name]` | `name` from front matter |
+| `[Description]` | `description` from front matter |
+| `[Date]` | today's date |
+| `[Overview text from DESIGN.md]` | Overview section body |
+| `[Colors section text from DESIGN.md]` | Colors section body |
+| `[Typography section text from DESIGN.md]` | Typography section body |
+| `[Shapes section text from DESIGN.md]` | Shapes section body |
+| `[Components section text from DESIGN.md]` | Components section body |
+| `[Do item]` / `[Don't item]` | Do's and Don'ts items |
 
-<!-- ❌ Avoid (Tailwind class may not be generated) -->
-<div class="bg-primary h-28 rounded-2xl"></div>
-```
+**For repeated token blocks** (colors, spacing, shapes, typography samples) — duplicate the example `<div>` blocks from the template for each token, filling in the actual values. Keep the surrounding wrapper elements unchanged.
 
-**Typography sample implementation pattern:**
-```html
-<p style="font-size:60px;font-weight:400;line-height:1.3;">
-  Heading sample text
-</p>
-```
-
-**Spacing bar implementation pattern:**
-```html
-<!-- spacing.lg = 40px -->
-<div style="width:40px;height:1rem;background:#2957c8;border-radius:4px;"></div>
-<span>lg — 40px</span>
-```
-
-**Border-radius sample implementation pattern:**
-```html
-<!-- rounded.md = 28px -->
-<div style="width:5rem;height:5rem;border-radius:28px;background:linear-gradient(135deg,#2957c8,#1ba39c);"></div>
-<span>md — 28px</span>
-```
+**Inline style rules (do not use Tailwind classes for these):**
+- Color swatches: `style="background:#XXXXXX;height:7rem;border-radius:0.75rem;"`
+- Typography samples: `style="font-size:Xpx;font-weight:N;line-height:N;"`
+- Spacing bars: `style="width:Xpx;height:1rem;background:#XXXXXX;border-radius:2px;flex-shrink:0;"`
+- Border-radius samples: `style="width:5rem;height:5rem;border-radius:Xpx;background:linear-gradient(135deg,#A,#B);"`
 
 ### Accessibility Rules
 
@@ -167,27 +149,35 @@ If a layout component exists, read it to understand the `<head>` structure.
 
 ## Step 6B: [Astro Mode] Generate and Write the .astro File
 
-Generate `src/pages/design-preview.astro` based on the structure found above. Overwrite any existing file without confirmation.
+**Start from `template.astro` verbatim. Do NOT redesign or rewrite it.** The Tailwind classes, layout structure, and visual style must be preserved exactly as-is.
 
-### Requirements for the Generated .astro File
+Write to `src/pages/design-preview.astro`, overwriting any existing file without confirmation.
 
-**Layout approach:**
-- If the project has a layout component, import and use it
-- If not, generate a standalone page starting from `<html>`, including font `<link>` tags following existing pages
-- Do not use Tailwind CDN (handled via Astro's integration)
+### What to change
 
-**Front matter (`---` block):**
+**Front matter — update values only:**
 ```astro
 ---
-// design-preview.astro
-const title = "[Project Name] Design System";
+// If a layout exists, add:
+import Layout from '../layouts/Layout.astro';
+const title = "[Project Name] Design System";   // ← fill in
+const generatedDate = "YYYY-MM-DD";             // ← today's date
 ---
 ```
 
-**Content structure is the same as HTML mode:**
-Page sections (Header, Overview, Colors, Typography, Spacing, Shapes, Components, Do's and Don'ts, Footer) are identical to HTML mode. Note Astro's JSX syntax (`class` is used as-is; inline styles use `style="..."`).
+**Layout approach — only if a layout component exists:**
+- Wrap the body content with `<Layout title={title}>…</Layout>` and remove the `<html>/<head>/<body>` wrapper
+- Otherwise keep the standalone structure and copy font `<link>` tags from existing pages into `<head>`
+- Do not use Tailwind CDN (handled via Astro's integration)
 
-**Color swatches and typography samples must use inline styles (same reason as HTML mode).**
+**In the body — same placeholder replacements as HTML mode** (see the table in Step 6A). For repeated token blocks, duplicate the example element from the template for each token.
+
+**Inline style rules are identical to HTML mode** — color swatches, typography samples, spacing bars, and border-radius samples all use `style="..."` not Tailwind classes.
+
+**Astro syntax reminders (do not alter the template beyond these):**
+- `class=` is correct (not `className`)
+- Self-closing tags need `/>` (e.g. `<br />`, `<hr />`, `<meta />`)
+- No `<script type="module" src="/src/main.ts">` — Astro handles bundling automatically
 
 ---
 
