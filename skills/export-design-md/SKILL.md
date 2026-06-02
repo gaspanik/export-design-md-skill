@@ -26,6 +26,9 @@ Read `package.json` and check `dependencies` / `devDependencies`.
 **Tailwind CSS (required):**
 If `"tailwindcss"` is not present, tell the user "Tailwind CSS not found. This skill requires a project using Tailwind CSS." and stop.
 
+**js-yaml (Astro mode only):**
+The generated `design-preview.astro` reads `DESIGN.md` at build time using `js-yaml`. This package is a transitive dependency of Astro and is typically present in `node_modules` without explicit installation. If a build error occurs (`Cannot find module 'js-yaml'`), run `npm install js-yaml` (or the project's equivalent) to add it as a direct dependency.
+
 **Framework detection:**
 If Tailwind is confirmed, check for `"astro"`:
 
@@ -116,10 +119,37 @@ Write to the project root as `design-preview.html`, overwriting any existing fil
 
 **For repeated token blocks** (colors, spacing, shapes, typography samples) — duplicate the example `<div>` blocks from the template for each token, filling in the actual values. Keep the surrounding wrapper elements unchanged.
 
-**Inline style rules (do not use Tailwind classes for these):**
-- Color swatches: `style="background:#XXXXXX;height:7rem;border-radius:0.75rem;"`
-- Spacing bars: `style="width:Xpx;height:1rem;background:#XXXXXX;border-radius:2px;flex-shrink:0;"`
-- Border-radius samples: `style="width:5rem;height:5rem;border-radius:Xpx;background:linear-gradient(135deg,#A,#B);"`
+### Token variables block (HTML mode)
+
+Emit a `<style>` block in `<head>` that maps all DESIGN.md tokens to CSS custom properties. This centralizes every value so edits only require updating this one block:
+
+```html
+<style>
+  :root {
+    /* Colors */
+    --color-primary: #XXXXXX;
+    --color-secondary: #XXXXXX;
+    /* …all colors from DESIGN.md… */
+    /* Spacing */
+    --spacing-xs: Xpx;
+    /* …all spacing… */
+    /* Rounded */
+    --rounded-sm: Xpx;
+    /* …all rounded… */
+    /* Components */
+    --btn-primary-bg: #XXXXXX;   /* resolved from components.button-primary.backgroundColor */
+    --btn-primary-color: #XXXXXX;
+    --btn-primary-padding: Xpx Xpx;
+    /* …other components… */
+  }
+</style>
+```
+
+**Inline style rules (use `var()` instead of hardcoded hex values):**
+- Color swatches: `style="background:var(--color-primary);height:7rem;border-radius:0.75rem;"`
+- Spacing bars: `style="width:var(--spacing-xs);height:1rem;background:var(--color-primary);border-radius:2px;flex-shrink:0;"`
+- Border-radius samples: `style="width:5rem;height:5rem;border-radius:var(--rounded-sm);background:linear-gradient(135deg,var(--color-primary),var(--color-text));"`
+- Component buttons: `style="background:var(--btn-primary-bg);color:var(--btn-primary-color);padding:var(--btn-primary-padding);"`
 
 **Typography samples — use Tailwind classes (not inline styles):**
 - Map font-size to the closest Tailwind text size class (e.g. `text-xs`, `text-sm`, `text-base`, `text-lg`, `text-xl`, `text-2xl`, …)
@@ -157,17 +187,44 @@ If a layout component exists, read it to understand the `<head>` structure.
 
 Write to `src/pages/design-preview.astro`, overwriting any existing file without confirmation.
 
-### What to change
+### Token injection (Astro mode)
 
-**Front matter — update values only:**
+Add the following to the frontmatter so all token values are read from `DESIGN.md` at build time — values can never drift from the source:
+
 ```astro
 ---
-// If a layout exists, add:
-import Layout from '../layouts/Layout.astro';
-const title = "[Project Name] Design System";   // ← fill in
-const generatedDate = "YYYY-MM-DD";             // ← today's date
+import { readFileSync } from 'node:fs';
+import yaml from 'js-yaml';
+// import Layout from '../layouts/Layout.astro'; // if a layout exists
+
+const raw = readFileSync('./DESIGN.md', 'utf-8');
+const match = raw.match(/^---\n([\s\S]*?)\n---/);
+const tokens: any = match ? yaml.load(match[1]) : {};
+const { colors = {}, typography = {}, rounded = {}, spacing = {}, components = {} } = tokens as any;
+
+// Resolve token references: "{colors.primary}" → actual hex value
+const r = (v: any): string => {
+  if (typeof v === 'string' && v.startsWith('{') && v.endsWith('}')) {
+    return v.slice(1, -1).split('.').reduce((o: any, k: string) => o?.[k], tokens) ?? v;
+  }
+  return String(v ?? '');
+};
+
+const title = `${tokens.name ?? 'Project'} Design System`;
+const description = tokens.description ?? '';
+const generatedDate = "YYYY-MM-DD"; // ← today's date
 ---
 ```
+
+Use template literals for all inline styles instead of hardcoded hex values:
+- Color swatch: `` style={`background:${colors.primary};height:7rem;`} ``
+- Spacing bar: `` style={`width:${spacing.xs};height:1rem;background:${colors.primary};`} ``
+- Shape sample: `` style={`width:5rem;height:5rem;border-radius:${rounded.sm};background:linear-gradient(135deg,${colors.primary},${colors.text});`} ``
+- Component button: `` style={`background:${r(components['button-primary']?.backgroundColor)};color:${r(components['button-primary']?.textColor)};padding:${components['button-primary']?.padding};`} ``
+
+### What to change
+
+**Front matter — already covered by token injection above. Only fill in `generatedDate`:**
 
 **Layout approach — only if a layout component exists:**
 - Wrap the body content with `<Layout title={title}>…</Layout>` and remove the `<html>/<head>/<body>` wrapper

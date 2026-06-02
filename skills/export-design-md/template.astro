@@ -1,15 +1,30 @@
 ---
 // design-preview.astro — template for export-design-md skill
-// Replace [Project Name], [Description], [Date], and all placeholder sections
-// with actual content from DESIGN.md before writing to src/pages/design-preview.astro.
+// Replace [Date] and all placeholder text with actual content from DESIGN.md.
+// Token values (colors, spacing, etc.) are read from DESIGN.md at build time — do NOT hardcode them.
 
+import { readFileSync } from 'node:fs';
+import yaml from 'js-yaml';
 // If the project has a layout component, import it here:
 // import Layout from '../layouts/Layout.astro';
-// Otherwise, this page renders as a standalone full-document page.
 
-const title = "[Project Name] Design System";
-const description = "[Description]";
-const generatedDate = "[Date]";
+// Read DESIGN.md tokens at build time — values stay in sync with DESIGN.md
+const raw = readFileSync('./DESIGN.md', 'utf-8');
+const match = raw.match(/^---\n([\s\S]*?)\n---/);
+const tokens: any = match ? yaml.load(match[1]) : {};
+const { colors = {}, typography = {}, rounded = {}, spacing = {}, components = {} } = tokens as any;
+
+// Resolve token references: "{colors.primary}" → actual hex value
+const r = (v: any): string => {
+  if (typeof v === 'string' && v.startsWith('{') && v.endsWith('}')) {
+    return v.slice(1, -1).split('.').reduce((o: any, k: string) => o?.[k], tokens) ?? v;
+  }
+  return String(v ?? '');
+};
+
+const title = `${tokens.name ?? 'Project'} Design System`;
+const description = tokens.description ?? '';
+const generatedDate = "[Date]"; // ← replace with today's date
 ---
 
 <!doctype html>

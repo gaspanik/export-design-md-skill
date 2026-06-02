@@ -4,8 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Design System — [Project Name]</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gen-interface-jp@latest/all.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gen-interface-jp@latest/display-all.css" />
+    <!-- Copy <link> tags from the project's existing pages (fonts, etc.) -->
+    <style>
+      /* DESIGN.md tokens — update this block when DESIGN.md changes */
+      :root {
+        /* Colors */
+        --color-primary: #2957c8;      /* colors.primary */
+        --color-secondary: #1ba39c;    /* colors.secondary */
+        --color-text: #1a1c1e;         /* colors.text */
+        --color-muted: #6b7280;        /* colors.muted */
+        --color-canvas: #f9fafb;       /* colors.canvas */
+        --color-surface: #f3f4f6;      /* colors.surface */
+        --color-elevated: #e5e7eb;     /* colors.elevated */
+        --color-border: #d1d5db;       /* colors.border */
+        /* Spacing */
+        --spacing-xs: 4px;
+        --spacing-sm: 8px;
+        --spacing-md: 16px;
+        --spacing-lg: 24px;
+        --spacing-xl: 40px;
+        --spacing-2xl: 96px;
+        /* Rounded */
+        --rounded-sm: 4px;
+        --rounded-md: 8px;
+        --rounded-lg: 16px;
+        --rounded-full: 9999px;
+        /* Components */
+        --btn-primary-bg: #2957c8;     /* resolved: components.button-primary.backgroundColor */
+        --btn-primary-color: #ffffff;  /* resolved: components.button-primary.textColor */
+        --btn-primary-padding: 16px 28px;
+      }
+    </style>
   </head>
   <body class="bg-gray-50 text-gray-900 antialiased">
 
@@ -59,13 +88,13 @@
         <div class="gap-4 grid grid-cols-3 mb-8">
           <!-- Primary -->
           <div>
-            <div style="background:#2957c8;height:7rem;border-radius:0.75rem;"></div>
+            <div style="background:var(--color-primary);height:7rem;border-radius:0.75rem;"></div>
             <p class="mt-2 font-medium text-sm">Primary</p>
             <p class="font-mono text-gray-400 text-xs">#2957c8</p>
           </div>
           <!-- Secondary -->
           <div>
-            <div style="background:#1ba39c;height:7rem;border-radius:0.75rem;"></div>
+            <div style="background:var(--color-secondary);height:7rem;border-radius:0.75rem;"></div>
             <p class="mt-2 font-medium text-sm">Secondary</p>
             <p class="font-mono text-gray-400 text-xs">#1ba39c</p>
           </div>
@@ -113,7 +142,7 @@
         <div class="flex flex-col gap-4">
           <!-- xs: 8px -->
           <div class="flex items-center gap-4">
-            <div style="width:8px;height:1rem;background:#2957c8;border-radius:2px;flex-shrink:0;"></div>
+            <div style="width:var(--spacing-xs);height:1rem;background:var(--color-primary);border-radius:2px;flex-shrink:0;"></div>
             <span class="w-8 font-mono text-gray-700 text-sm">xs</span>
             <span class="text-gray-400 text-sm">8px</span>
           </div>
@@ -131,7 +160,7 @@
         <div class="gap-6 grid grid-cols-4 mb-8">
           <!-- sm: 16px -->
           <div class="flex flex-col items-center gap-3">
-            <div style="width:5rem;height:5rem;border-radius:16px;background:linear-gradient(135deg,#2957c8,#1ba39c);"></div>
+            <div style="width:5rem;height:5rem;border-radius:var(--rounded-sm);background:linear-gradient(135deg,var(--color-primary),var(--color-secondary));"></div>
             <div class="text-center">
               <p class="font-medium text-sm">sm</p>
               <p class="font-mono text-gray-400 text-xs">16px</p>
