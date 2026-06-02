@@ -118,9 +118,13 @@ Write to the project root as `design-preview.html`, overwriting any existing fil
 
 **Inline style rules (do not use Tailwind classes for these):**
 - Color swatches: `style="background:#XXXXXX;height:7rem;border-radius:0.75rem;"`
-- Typography samples: `style="font-size:Xpx;font-weight:N;line-height:N;"`
 - Spacing bars: `style="width:Xpx;height:1rem;background:#XXXXXX;border-radius:2px;flex-shrink:0;"`
 - Border-radius samples: `style="width:5rem;height:5rem;border-radius:Xpx;background:linear-gradient(135deg,#A,#B);"`
+
+**Typography samples — use Tailwind classes (not inline styles):**
+- Map font-size to the closest Tailwind text size class (e.g. `text-xs`, `text-sm`, `text-base`, `text-lg`, `text-xl`, `text-2xl`, …)
+- Map font-weight to a Tailwind font-weight class (e.g. `font-thin`, `font-light`, `font-normal`, `font-medium`, `font-semibold`, `font-bold`, `font-extrabold`, `font-black`)
+- Map line-height to a Tailwind leading class (e.g. `leading-none`, `leading-tight`, `leading-snug`, `leading-normal`, `leading-relaxed`, `leading-loose`)
 
 ### Accessibility Rules
 
@@ -172,7 +176,7 @@ const generatedDate = "YYYY-MM-DD";             // ← today's date
 
 **In the body — same placeholder replacements as HTML mode** (see the table in Step 6A). For repeated token blocks, duplicate the example element from the template for each token.
 
-**Inline style rules are identical to HTML mode** — color swatches, typography samples, spacing bars, and border-radius samples all use `style="..."` not Tailwind classes.
+**Inline style rules are identical to HTML mode** — color swatches, spacing bars, and border-radius samples use `style="..."` not Tailwind classes. Typography samples use Tailwind classes (see HTML mode rules above).
 
 **Astro syntax reminders (do not alter the template beyond these):**
 - `class=` is correct (not `className`)
