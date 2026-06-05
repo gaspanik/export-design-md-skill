@@ -27,13 +27,24 @@ Read `package.json` and check `dependencies` / `devDependencies`.
 If `"tailwindcss"` is not present, tell the user "Tailwind CSS not found. This skill requires a project using Tailwind CSS." and stop.
 
 **js-yaml (Astro mode only):**
-The generated `design-preview.astro` reads `DESIGN.md` at build time using `js-yaml`. This package is a transitive dependency of Astro and is typically present in `node_modules` without explicit installation. If a build error occurs (`Cannot find module 'js-yaml'`), run `npm install js-yaml` (or the project's equivalent) to add it as a direct dependency.
+The generated `design-preview.astro` reads `DESIGN.md` at build time using `js-yaml`. This package is a transitive dependency of Astro and is typically present in `node_modules` without explicit installation. If a build error occurs (`Cannot find module 'js-yaml')`), run `npm install js-yaml` (or the project's equivalent) to add it as a direct dependency.
 
 **Framework detection:**
 If Tailwind is confirmed, check for `"astro"`:
 
 - **Astro present** → **Astro mode** (run Steps 5B & 6B)
 - **Astro absent** → **HTML mode** (run Steps 5A & 6A)
+
+**Main CSS detection (for auto export.css):**
+Search for a main CSS entry point that contains `@import "tailwindcss"` or `@tailwind base`:
+
+```bash
+grep -rl --include="*.css" "@import \"tailwindcss\"\|@tailwind base" \
+  src/ public/ . --exclude-dir=node_modules --exclude-dir=dist 2>/dev/null | head -3
+```
+
+- **No main CSS found** → set `AUTO_EXPORT_CSS=true` (export.css will be generated automatically after the preview)
+- **Main CSS found** → set `AUTO_EXPORT_CSS=false`
 
 ## Step 3: Determine the Template
 
@@ -242,11 +253,17 @@ Use template literals for all inline styles instead of hardcoded hex values:
 
 ---
 
-## Step 7: Completion Report & Next Action
+## Step 7: Auto export.css (if AUTO_EXPORT_CSS=true)
 
-Report the generated file path, mode used, and how to view it in the browser:
+If `AUTO_EXPORT_CSS=true`, generate `export.css` now (before the completion report) using the same logic as Step 8D below, then note it in the completion report.
+
+## Step 8: Completion Report & Next Action
+
+Report the generated file path(s), mode used, and how to view it in the browser:
 - HTML mode: start the dev server, then open `http://localhost:[PORT]/design-preview.html`
 - Astro mode: run `astro dev`, then open `http://localhost:4321/design-preview`
+
+If `AUTO_EXPORT_CSS=true`, also report that `export.css` was generated automatically.
 
 Then use `AskUserQuestion` to ask what to do next:
 
@@ -260,11 +277,17 @@ What would you like to do next?
    → Create a design system with components, variables, and auto-layout
 
 3. Done
+
+4. Write export.css
+   → Export DESIGN.md tokens as a Tailwind CSS v4 @theme block
+   (skipped if already auto-generated)
 ```
+
+If `AUTO_EXPORT_CSS=true`, show option 4 as "(already generated)" and make it unselectable (just informational).
 
 ---
 
-## Step 8: Follow-up Based on Selection
+## Step 9: Follow-up Based on Selection
 
 ### If 1 is selected — call `generate_figma_design` directly
 
@@ -290,3 +313,52 @@ Call the `figma:figma-use` skill via the `Skill` tool, passing DESIGN.md token i
 ### If 3 is selected — done
 
 No further action.
+
+### If 4 is selected — generate export.css (Step 8D)
+
+**Step 8D: Generate export.css**
+
+Write `export.css` to the project root. The file maps all DESIGN.md tokens to a Tailwind CSS v4 `@theme` block. It is a standalone file meant as a starting point for manually integrating tokens into a new project — it does not `@import "tailwindcss"` itself.
+
+Structure:
+
+```css
+/* Generated from DESIGN.md — copy into your project's main CSS and adjust as needed */
+
+@theme {
+  /* Colors */
+  --color-[key]: [value];   /* one entry per colors token */
+
+  /* Spacing */
+  --spacing-[key]: [value]; /* one entry per spacing token */
+
+  /* Border radius */
+  --radius-[key]: [value];  /* one entry per rounded token */
+
+  /* Typography */
+  --font-[family-key]: [value];  /* font-family tokens */
+  --text-[size-key]: [value];    /* font-size tokens */
+}
+
+/* Component defaults (not Tailwind utilities — use as reference) */
+@layer components {
+  /* [component-name]: [resolved token values as comments] */
+}
+```
+
+**Token mapping rules:**
+
+| DESIGN.md key | CSS variable | Example |
+|---|---|---|
+| `colors.primary` | `--color-primary` | `--color-primary: #1e40af;` |
+| `spacing.xs` | `--spacing-xs` | `--spacing-xs: 4px;` |
+| `rounded.sm` | `--radius-sm` | `--radius-sm: 4px;` |
+| `typography.fontFamily.*` | `--font-*` | `--font-sans: "Inter", sans-serif;` |
+| `typography.fontSize.*` | `--text-*` | `--text-sm: 0.875rem;` |
+| `components.*` | `@layer components` comment block | for reference only |
+
+- Resolve `{token.references}` to their actual values before writing.
+- Use kebab-case for all variable names.
+- Components go into an `@layer components {}` block as CSS comments (e.g. `/* button-primary: bg #1e40af, color #fff, padding 0.5rem 1rem */`) — they are reference material, not utility classes.
+
+Overwrite any existing `export.css` without confirmation. Report the file path when done.
