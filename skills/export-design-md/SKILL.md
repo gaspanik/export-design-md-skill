@@ -54,9 +54,9 @@ Check whether `$ARGUMENTS` contains a file path.
 - **No argument (HTML mode)** → Use `template.html` in the same directory as this skill
 - **No argument (Astro mode)** → Use `template.astro` in the same directory as this skill
 
-The template path is relative to the skill directory. If the skill is at `.claude/skills/export-design-md/`, the default template paths are:
-- HTML mode: `.claude/skills/export-design-md/template.html`
-- Astro mode: `.claude/skills/export-design-md/template.astro`
+The template path is relative to the skill directory — resolve it from wherever this skill is actually installed (e.g. project-level `.claude/skills/export-design-md/` or global `~/.claude/skills/export-design-md/`):
+- HTML mode: `<skill directory>/template.html`
+- Astro mode: `<skill directory>/template.astro`
 
 Read the appropriate template **before** generating the output file.
 
@@ -170,7 +170,7 @@ Emit a `<style>` block in `<head>` that maps all DESIGN.md tokens to CSS custom 
 ### Accessibility Rules
 
 - Navigation must use `nav > ul > li > a` structure
-- Uppercase text must not be written directly in HTML; use `style="text-transform:uppercase"` instead
+- Uppercase text must not be written directly in HTML; write it capitalized and apply the Tailwind `uppercase` class instead
 - Icon buttons must have `aria-label`
 
 ---
@@ -280,10 +280,9 @@ What would you like to do next?
 
 4. Write export.css
    → Export DESIGN.md tokens as a Tailwind CSS v4 @theme block
-   (skipped if already auto-generated)
 ```
 
-If `AUTO_EXPORT_CSS=true`, show option 4 as "(already generated)" and make it unselectable (just informational).
+If `AUTO_EXPORT_CSS=true`, **omit option 4** and present only options 1–3 (AskUserQuestion options cannot be made unselectable) — the completion report already states that `export.css` was generated.
 
 ---
 
