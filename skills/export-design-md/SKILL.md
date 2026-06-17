@@ -13,9 +13,7 @@ allowed-tools: Bash, Read, Write, Edit, AskUserQuestion, Skill
 
 Check whether `DESIGN.md` exists in the project root.
 
-```bash
-ls DESIGN.md 2>/dev/null || echo "not found"
-```
+Check whether `DESIGN.md` exists in the project root.
 
 If not found, tell the user "DESIGN.md not found. Please generate DESIGN.md first." and stop.
 
@@ -38,10 +36,7 @@ If Tailwind is confirmed, check for `"astro"`:
 **Main CSS detection (for auto export.css):**
 Search for a main CSS entry point that contains `@import "tailwindcss"` or `@tailwind base`:
 
-```bash
-grep -rl --include="*.css" "@import \"tailwindcss\"\|@tailwind base" \
-  src/ public/ . --exclude-dir=node_modules --exclude-dir=dist 2>/dev/null | head -3
-```
+Search for CSS files containing `@import "tailwindcss"` or `@tailwind base` under `src/`, `public/`, and the project root (excluding `node_modules`/`dist`).
 
 - **No main CSS found** → set `AUTO_EXPORT_CSS=true` (export.css will be generated automatically after the preview)
 - **Main CSS found** → set `AUTO_EXPORT_CSS=false`
@@ -84,12 +79,7 @@ Resolve token references like `{colors.primary}` to their actual values before u
 
 Gather the `<link>` / `<script>` tags to include in the generated HTML's `<head>`.
 
-```bash
-# Find HTML files in the root, excluding node_modules / dist
-find . -maxdepth 2 -name "*.html" \
-  ! -path "*/node_modules/*" ! -path "*/dist/*" \
-  ! -name "design-preview.html" | head -5
-```
+Enumerate `*.html` files in the project root and one level deep (excluding `node_modules`/`dist`/`design-preview.html`, up to 5 results).
 
 Read the found HTML file (typically `index.html`) and extract from `<head>`:
 - External `<link rel="stylesheet">` tags (fonts, etc.)
@@ -97,11 +87,7 @@ Read the found HTML file (typically `index.html`) and extract from `<head>`:
 
 Reuse these as-is in the generated HTML's `<head>` and end of `<body>`. If no HTML file is found, grep `src/` for the entry point:
 
-```bash
-grep -rl --include="*.ts" --include="*.js" \
-  --exclude-dir=node_modules --exclude-dir=dist \
-  "main" src/ | head -3
-```
+Search for TS/JS files under `src/` containing `main` (entry point candidates).
 
 ## Step 6A: [HTML Mode] Generate and Write the HTML
 
@@ -179,11 +165,7 @@ Emit a `<style>` block in `<head>` that maps all DESIGN.md tokens to CSS custom 
 
 Inspect the Astro project's conventions:
 
-```bash
-# Check src/pages/ and src/layouts/
-find src -name "*.astro" \
-  ! -path "*/node_modules/*" ! -path "*/dist/*" | head -10
-```
+Enumerate `*.astro` files under `src/` (up to 10 results).
 
 Read an existing page (e.g. `src/pages/index.astro`) and check:
 - Whether it imports a layout component (e.g. from `src/layouts/`)
