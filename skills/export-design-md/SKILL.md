@@ -24,8 +24,14 @@ Read `package.json` and check `dependencies` / `devDependencies`.
 **Tailwind CSS (required):**
 If `"tailwindcss"` is not present, tell the user "Tailwind CSS not found. This skill requires a project using Tailwind CSS." and stop.
 
-**js-yaml (Astro mode only):**
-The generated `design-preview.astro` reads `DESIGN.md` at build time using `js-yaml`. This package is a transitive dependency of Astro and is typically present in `node_modules` without explicit installation. If a build error occurs (`Cannot find module 'js-yaml')`), run `npm install js-yaml` (or the project's equivalent) to add it as a direct dependency.
+**js-yaml and @types/node (Astro mode only):**
+The generated `design-preview.astro` reads `DESIGN.md` at build time using `js-yaml` and Node's `fs` module. These are not always present as direct dependencies.
+
+When Astro mode is confirmed, tell the user **before installing**:
+
+> `design-preview.astro` は `js-yaml` と `@types/node` を使用します。これらを devDependencies に追加します。手動でサーバを起動する場合は事前にインストールしておいてください。
+
+Then install them automatically using the project's package manager (e.g. `npm install -D js-yaml @types/js-yaml @types/node`).
 
 **Framework detection:**
 If Tailwind is confirmed, check for `"astro"`:
