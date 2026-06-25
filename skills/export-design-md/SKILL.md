@@ -31,7 +31,13 @@ When Astro mode is confirmed, tell the user **before installing**:
 
 > `design-preview.astro` は `js-yaml` と `@types/node` を使用します。これらを devDependencies に追加します。手動でサーバを起動する場合は事前にインストールしておいてください。
 
-Then install them automatically using the project's package manager (e.g. `npm install -D js-yaml @types/js-yaml @types/node`).
+Then install them automatically using the project's package manager. Detect it by checking for `pnpm-lock.yaml`, `yarn.lock`, or `package-lock.json`:
+
+- pnpm: `pnpm add -D js-yaml @types/node`
+- npm: `npm install -D js-yaml @types/node`
+- yarn: `yarn add -D js-yaml @types/node`
+
+⚠️ Do NOT install `@types/js-yaml` — js-yaml v5 ships its own TypeScript declarations. `@types/js-yaml` is for v4 and causes a version mismatch error.
 
 **Framework detection:**
 If Tailwind is confirmed, check for `"astro"`:
@@ -193,11 +199,12 @@ Add the following to the frontmatter so all token values are read from `DESIGN.m
 ```astro
 ---
 import { readFileSync } from 'node:fs';
-import yaml from 'js-yaml';
+import * as yaml from 'js-yaml';
 // import Layout from '../layouts/Layout.astro'; // if a layout exists
 
 const raw = readFileSync('./DESIGN.md', 'utf-8');
 const match = raw.match(/^---\n([\s\S]*?)\n---/);
+// ⚠️ js-yaml v5: DEFAULT_SAFE_SCHEMA was removed. Call load() with no options — CORE_SCHEMA is the safe default.
 const tokens: any = match ? yaml.load(match[1]) : {};
 const { colors = {}, typography = {}, rounded = {}, spacing = {}, components = {} } = tokens as any;
 
